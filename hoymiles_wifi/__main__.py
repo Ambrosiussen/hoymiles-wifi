@@ -5,6 +5,8 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import logging
+import os
 import sys
 from dataclasses import asdict, dataclass, is_dataclass
 from pprint import pprint
@@ -800,12 +802,7 @@ async def main() -> None:
         help="The inverter specific random string used for encryption, see command: is-encrypted",
     )
 
-    parser.add_argument(
-        "--timeout",
-        type=int,
-        default=None,
-        help="Custom timeout"
-    )
+    parser.add_argument("--timeout", type=int, default=None, help="Custom timeout")
 
     parser.add_argument(
         "command",
@@ -944,9 +941,19 @@ async def main() -> None:
         sys.exit(2)
 
 
+def configure_logging() -> None:
+    """Configure logging for the hoymiles_wifi package."""
+
+    loglevel = os.environ.get("LOGLEVEL", "INFO").upper()
+    logging.basicConfig(
+        level=loglevel,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )
+
+
 def run_main() -> None:
     """Run the main function for the hoymiles_wifi package."""
-
+    configure_logging()
     asyncio.run(main())
 
 
